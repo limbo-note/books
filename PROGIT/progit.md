@@ -16,6 +16,14 @@
 	- [3.4 分支开发工作流](#34-分支开发工作流)
 	- [3.5 远程分支](#35-远程分支)
 	- [3.6 变基](#36-变基)
+- [4. 服务器上的Git](#4-服务器上的git)
+- [5. 分布式Git](#5-分布式git)
+- [6. GitHub](#6-github)
+	- [6.2 对项目做出贡献](#62-对项目做出贡献)
+	- [6.3 维护项目](#63-维护项目)
+	- [6.4 管理组织](#64-管理组织)
+	- [6.5 脚本GitHub](#65-脚本github)
+- [7](#7)
 
 # 1. 起步
 ### 1.1 版本控制
@@ -226,3 +234,46 @@
 	- `git push [remote] --delete [branch]`
 
 ### 3.6 变基
+
+整合不同分支的方法有：`merge`和`rebase`，`merge`合并会把两个分支的最新快照以及二者最近的共同祖先进行三方合并，并生成一个新的合并提交，即:![](https://github.com/limbo-note/books/blob/master/PROGIT/3-19.jpg) ![](https://github.com/limbo-note/books/blob/master/PROGIT/3-20.jpg)
+
+- 变基的基本操作
+	- 提取在 C4 中引入的补丁和修改，然后在 C3 的基础上再应用一次
+	- `git checkout experiment`, `git rebase master`即为变基操作
+	- 找到这两个分支最近共同祖先 C2 ，对比当前分支相对于该祖先的历次提交，提取相应的修改并存为临时文件，然后将当前分支指向目标基底 C3 , 最后以此将之前另存为临时文件的修改应用于 C3 ![](https://github.com/limbo-note/books/blob/master/PROGIT/3-21.jpg)
+	- 此时可回到master，再进行合并. `git checkout master`,`git merge experiment` ![](https://github.com/limbo-note/books/blob/master/PROGIT/3-22.jpg)
+	- 变基合并的结果和普通的三方合并的结果是一样的
+- `git rebase --onto`
+	- 如图，想将在client 分支里但不在 server 分支里的修改合并到master，这时候就必须用到变基操作`git rebase --onto master server client`![](https://github.com/limbo-note/books/blob/master/PROGIT/3-23.jpg)
+	- 以上命令的意思是：“取出 client 分支，找出处于 client 分支和 server 分支的共同祖先**之后**的修改，然后把它们在 master 分支上重演一遍”，即最后会变成![](https://github.com/limbo-note/books/blob/master/PROGIT/3-24.jpg) 此操作没有将 C3 合并至master
+- 变基的风险 
+	- 不要对在你的仓库外有副本的分支执行变基
+- 变基和合并
+	- 变基会改变提交历史，而合并不会，各有优劣，酌情选择
+
+# 4. 服务器上的Git
+(.............)
+# 5. 分布式Git
+(.............)
+
+# 6. GitHub
+
+### 6.2 对项目做出贡献
+
+- fork需要贡献的项目
+- 将派生出的副本克隆到本地
+- 创建出名称有意义的分支
+- 修改代码
+- 将改动提交到本地分支中
+- 将新分支推送到 GitHub 的副本中
+- 在github的副本中，可以创建合并请求，发送给原拥有者一个合并请求
+
+### 6.3 维护项目
+(........)
+### 6.4 管理组织
+(........)
+### 6.5 脚本GitHub
+(........)
+
+# 7
+(........)
