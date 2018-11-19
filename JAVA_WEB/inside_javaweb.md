@@ -8,7 +8,7 @@ B/S架构好处：
 
 C/S大多采用长连接，B/S的HTTP则是无状态的短连接。大多数B/S架构如下图：
 
-![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/1-1.png)
+![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/1-1.png)
 
 根据上图，首先请求DNS把URL解析成IP，找到对应服务器并发送get请求，服务器返回资源。其中细节的业务逻辑比较复杂：服务器有多台时，需要一个负载均衡器分配请求；请求的数据可能在分布式缓存或静态文件或数据库中；当浏览器解析数据时可能还会发现一些静态资源需要另外发起HTTP请求
 
@@ -34,7 +34,7 @@ C/S大多采用长连接，B/S的HTTP则是无状态的短连接。大多数B/S�
 
 域名解析过程如图：  
 
-![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/1-2.png)
+![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/1-2.png)
 
 在浏览器中输入域名按回车后，DNS解析有十个步骤：
 1. 浏览器检查缓存中是否存在，若存在则结束。缓存的大小和时间都有限制
@@ -68,11 +68,11 @@ C/S大多采用长连接，B/S的HTTP则是无状态的短连接。大多数B/S�
 
 架构如图：
 
-![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/1-3.png)
+![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/1-3.png)
 
 - 负载均衡
-	- 链路负载均衡。通过DNS解析成不同的IP，用户根据不同的IP来访问不同的服务器![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/1-4.png)
-	- 集群负载均衡。又分为硬件、软件负载均衡，硬件负载均衡用一台昂贵的、性能好的服务器转发请求；软件负载均衡成本低，但一次访问请求要经过多次代理服务器，增加网络延迟![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/1-5.png) ![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/1-6.png)
+	- 链路负载均衡。通过DNS解析成不同的IP，用户根据不同的IP来访问不同的服务器![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/1-4.png)
+	- 集群负载均衡。又分为硬件、软件负载均衡，硬件负载均衡用一台昂贵的、性能好的服务器转发请求；软件负载均衡成本低，但一次访问请求要经过多次代理服务器，增加网络延迟![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/1-5.png) ![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/1-6.png)
 	- 操作系统负载均衡。利用操作系统级别的软中断或硬中断达到负载均衡
 - CND动态加速 
 	- 在CDN的DNS解析中通过动态的链路探测寻找回源最好的一条路径
@@ -101,25 +101,25 @@ java.io下大概有80个类，大概可分为四组：
 ### 2.2 磁盘I/O工作机制
 
 - 访问文件的方式（应用程序访问物理设备只能通过系统调用，读写分别对应read()和write()两个系统调用）
-	- 标准访问文件的方式。程序调用read()时，操作系统检查缓存是否存在，若存在则直接返回，如不存在，则从磁盘中读；同理，调用write()时，将数据从用户地址空间复制到内核地址空间的缓存，这时对程序来说已经写完成，写到磁盘的时机由操作系统决定或显式调用同步命令![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-1.jpg)
-	- 直接I/O的方式。直接访问磁盘，不经过内核缓存![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-2.jpg)
+	- 标准访问文件的方式。程序调用read()时，操作系统检查缓存是否存在，若存在则直接返回，如不存在，则从磁盘中读；同理，调用write()时，将数据从用户地址空间复制到内核地址空间的缓存，这时对程序来说已经写完成，写到磁盘的时机由操作系统决定或显式调用同步命令![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-1.jpg)
+	- 直接I/O的方式。直接访问磁盘，不经过内核缓存![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-2.jpg)
 	- 同步访问文件的方式。当数据成功写入磁盘时才返回，性能一般比较差（比标准方式还同步）
 	- 异步访问文件的方式。线程发出读写请求后，去执行别的任务，直到请求的数据返回才继续（比标准方式还异步）
-	- 内存映射的方式。将应用缓存和内核缓存关联起来，减少内核空间到 用户空间的复制![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-3.jpg)
+	- 内存映射的方式。将应用缓存和内核缓存关联起来，减少内核空间到 用户空间的复制![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-3.jpg)
 - Java访问磁盘文件
 	- 数据在磁盘中的唯一最小描述就是文件，上层程序只能通过文件来操作磁盘数据。文件也是操作系统和磁盘驱动器交互的最小单元
-	- 以File类为例，与磁盘交互过程如图![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-4.jpg)
+	- 以File类为例，与磁盘交互过程如图![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-4.jpg)
 - Java序列化技术（将对象转化成二进制的字节数组）
 	- 继承Serializable接口实现序列化
 	- 序列化出来的二进制数据包含五部分：序列化文件头、序列化的类的描述、各个域的描述、父类信息描述、域的实际值（若域是对象，还将序列化这个对象）
-	- 序列化的复杂情况包括：![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-5.jpg)
+	- 序列化的复杂情况包括：![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-5.jpg)
 	- Java自带的序列化在跨平台时可能产生各种错误，尽量用通用的数据结构如JSON或XML
 
 ### 2.3 网络I/O工作机制
 
 - TCP状态转化
 	
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-6.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-6.jpg)
 	- CLOSED. 起点、超时或连接关闭时的状态
 	- LISTEN. 服务端等待连接，一般调用Socket、bind、listen
 	- SYN-SENT. 客户端发起连接，发送SYN。若服务端不能连接，则直接进入CLOSED
@@ -164,21 +164,21 @@ java.io下大概有80个类，大概可分为四组：
 	- cat /proc/net/snmp 查看系统的连接情况
 	- netstat 查看网络统计信息
 
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-7.jpg)  
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-8.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-7.jpg)  
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-8.jpg)
 - 网络I/O优化
 	- 减少网络交互次数。设置缓存和合并访问请求
 	- 减少网络传输数据量大小。数据压缩
 	- 尽量减少编码。提前把字符转化为字节
 
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-9.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-9.jpg)
 
 ### 2.6 适配器模式
 把一个类的接口变换成客户端所能接受的另一种接口，使两个不匹配接口的类能够在一起工作
 
 - 适配器模式结构
 	
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-10.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-10.jpg)
 	- Target（目标接口）。所要转换的所期待的接口
 	- Adaptee（源角色）。需要适配的接口
 	- Adapter（适配器）
@@ -186,7 +186,7 @@ java.io下大概有80个类，大概可分为四组：
 	- InputStreamReader和OutputStreamWriter为典型
 	- 一般编程模式如下图
 
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/2-11.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/2-11.jpg)
 	- [https://blog.csdn.net/zhangjg_blog/article/details/18735243](https://blog.csdn.net/zhangjg_blog/article/details/18735243 "适配器模式详解")
 
 ### 2.7 装饰器模式
@@ -212,7 +212,7 @@ java.io下大概有80个类，大概可分为四组：
 	- UTF-16. 双字节编码，16位所以叫UTF-16，不论什么字符都用两个字节表示（Java以UTF-16作为内存字符存储的格式，因为它简化了字符串操作）
 	- UTF-8. UTF-16的缺点是可以用单字节表示的字符也要用双字节表示，浪费空间；所以UTF-8采用变长编码弥补这一缺点，不同字符的长度为1-6字节不等。编码规则如下
 
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/3-1.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/3-1.jpg)
 
 ### 3.2 Java中需要编码的场景
 
@@ -226,19 +226,19 @@ java.io下大概有80个类，大概可分为四组：
 以下均以“I am 君山”为例说明编码细节
 - ISO-8859-1编码
 
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/3-2.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/3-2.jpg)
 	- 7个char字符经过ISO-8859-1编码后转换为7个byte，“君山”被转换成3f，即"?"字符，这会吞噬原来的中文字符信息无法复原，称为“黑洞”
 - GB2312编码
 	
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/3-3.jpg)	
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/3-3.jpg)	
 	- 只支持有限的汉字，并不是所有汉字都能用GB2312编码
 - GBK与GB2312兼容，一般的汉字编码结果相同
 - UTF-16
 	
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/3-4.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/3-4.jpg)
 - UTF-8
 
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/3-5.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/3-5.jpg)
 - 对中文字符，上述编码都能处理。GB2312与GBK类似，但GBK范围更大，尽量选择GBK；UTF-16编码效率比UTF-8高，但不适合在网络间传输，UTF-8效率较低但适合传输
 
 ### 3.4 在Java Web中的编解码
@@ -256,22 +256,22 @@ URL中的中文采用GBK编解码
 - 中文变成看不懂的乱码
 	- 字符串在解码时所用的字符集和编码时的字符集不一致
 
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/3-6.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/3-6.jpg)
 - 一个汉字变成一个问号
 
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/3-7.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/3-7.jpg)
 	- 中文经过了ISO-8859-1编码，超出范围的字符统一用3f表示，出现“黑洞”现象
 - 一个汉字变成两个问号
 	
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/3-8.jpg)
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/3-8.jpg)
 	- 多次混合解码
 - 巧合情况
 	
-	![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/3-9.jpg)	
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/3-9.jpg)	
 
 # 4. Javac编译原理
 
-![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/4-1.jpg)
+![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/4-1.jpg)
 
 （..................编译原理部分，暂时不用）
 （..................访问者模式，暂时不用）
@@ -299,7 +299,7 @@ JVM提供三层ClassLoader:
 - ExtClassLoader. 是JVM自身的一部分，但却有点不同，特定服务于java.ext.dirs下的类
 - AppClassLoader. 父类是ExtClassLoader，加载一般的类，包括在java.class.path下的所有类。通过Launcher.getClassLoader()方法获取的就是AppClassLoader对象
 
-自己实现的类加载器的父加载器都是AppClassLoader，所以等级层次如图![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/6-1.jpg)
+自己实现的类加载器的父加载器都是AppClassLoader，所以等级层次如图![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/6-1.jpg)
 
 JVM加载class文件到内存有两种方式：
 - 隐式加载。 不通过在代码里调用ClassLoader来加载，而是JVM自动加载
@@ -307,7 +307,7 @@ JVM加载class文件到内存有两种方式：
 - 一般两种方法是混合使用的，比如通过自定义ClassLoader显式加载一个类时，这个类引用了其他类，那其他类则是隐式加载
 
 ### 6.3 加载class文件
-![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/6-2.jpg)
+![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/6-2.jpg)
 
 在被使用前，过程可分为加载、连接、初始化：
 - 加载。 即加载字节码到内存，如何加载应在findClass()中实现
@@ -386,14 +386,38 @@ JVM判断同一个类的两个条件：
 
 只放两个主要结构图，其它和《深入理解jvm》中第八章一样，可互补
 
-![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/7-1.jpg)
+![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/7-1.jpg)
 
-![](https://github.com/limbo-china/books/blob/master/JAVA_WEB/7-2.jpg)
+![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/7-2.jpg)
 
 # 8. JVM内存管理
+
+未记录的内容和《深入理解jvm》互补
 
 ### 8.2 内核空间和用户空间
 
 计算的内存空间被分为内核空间和用户空间。内核空间提供给操作系统运行时所必要的内存需求，而程序只能使用用户空间的内存。所以如网络传输中，数据都是先从内核空间接收，然后再复制到用户空间
 
-类本身和加载类的类加载器都放在永久代中（不是老年代）
+类本身（即类的class对象）和加载类的类加载器都放在永久代中（不是老年代）
+
+### 8.7 内存问题分析
+
+- jstat分析GC日志
+- jmap+mat分析堆内存
+- crash日志分析
+	- EXCEPTION_ACCESS_VIOLATION。 JVM本身自己代码的BUG。大部分情况由垃圾回收导致
+	- SIGSEGV。 本地代码或JNI的代码出错
+	- EXCEPTION_STACK_OVERFLOW。 java代码和本地代码共用了相同的栈，然后出现了栈溢出
+
+### 8.8~10 三个JVM分析实例
+
+# 9. Servlet工作原理解析
+
+### 9.1 从Servlet容器说起
+
+如Jetty和Tomcat，都是Servlet容器。Tomcat容器模型如图：
+	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/9-1.jpg)
+真正管理Servlet的容器是Context容器，一个Context对应一个web工程。Tomcat配置中的`<Context path="..." docBase="..." reloadable="true" />`可以体现这一点
+
+- Servlet容器启动过程
+	- 
