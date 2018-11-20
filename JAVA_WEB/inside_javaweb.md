@@ -410,14 +410,3 @@ JVM判断同一个类的两个条件：
 	- EXCEPTION_STACK_OVERFLOW。 java代码和本地代码共用了相同的栈，然后出现了栈溢出
 
 ### 8.8~10 三个JVM分析实例
-
-# 9. Servlet工作原理解析
-
-### 9.1 从Servlet容器说起
-
-如Jetty和Tomcat，都是Servlet容器。Tomcat容器模型如图：
-	![](https://github.com/limbo-note/books/blob/master/JAVA_WEB/9-1.jpg)
-真正管理Servlet的容器是Context容器，一个Context对应一个web工程。Tomcat配置中的`<Context path="..." docBase="..." reloadable="true" />`可以体现这一点
-
-- Servlet容器启动过程
-	- 
