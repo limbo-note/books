@@ -1,3 +1,25 @@
+- [2. Development Process](#2-development-process)
+	- [Iterative and Waterfall Processes](#iterative-and-waterfall-processes)
+	- [Predictive and Adaptive Planning](#predictive-and-adaptive-planning)
+	- [Agile Processes](#agile-processes)
+	- [Rational Unified Process](#rational-unified-process)
+	- [Fitting a Process to a Project](#fitting-a-process-to-a-project)
+	- [Fitting the UML into a Process](#fitting-the-uml-into-a-process)
+- [3. Class Diagrams: The Essentials](#3-class-diagrams:-the-essentials)
+	- [Properties](#properties)
+	- [Multiplicity](#multiplicity)
+	- [Bidirectional Associations](#bidirectional-associations)
+	- [Operations](#operations)
+	- [Generalization](#generalization)
+	- [Note and Comments](#note-and-comments)
+	- [Dependency](#dependency)
+	- [Constraint Rules](#constraint-rules)
+	- [A simple class diagram](#a-simple-class-diagram)
+- [4. Sequence Diagrams](#4-sequence-diagrams)
+	- [Creating and Deleting Participants](#creating-and-deleting-participants)
+	- [Loops, Conditionals, and the Like](#loops,-conditionals,-and-the-like)
+- [5. Class Diagrams: Advanced Concepts](#5-class-diagrams:-advanced-concepts)
+
 # 2. Development Process
 
 **Rational Unified Process (RUP)** is one process framework that you can use with the UML.
@@ -60,7 +82,7 @@ RUP is essentially an iterative process. It should follow 4 phases:
 - `Single-valued`: upper bound = 1
 - `Multivalued`: upper bound > 1
 
-### Bidirectional Associations						
+### Bidirectional Associations
 ![](https://github.com/limbo-note/books/blob/master/UML_DISTILLED/3-3.jpg)
 or											
 ![](https://github.com/limbo-note/books/blob/master/UML_DISTILLED/3-4.jpg)
@@ -74,7 +96,7 @@ or
 ### Generalization
 - similar to **inheritance（实线空心三角）/interface（虚线空心三角）** in OO languages, for example, `Customer` is Generalization, with `Personal Customer` and `Corporate Customer` as subtypes
 
-### Note and Comments									
+### Note and Comments
 
 ![](https://github.com/limbo-note/books/blob/master/UML_DISTILLED/3-5.jpg)
 
