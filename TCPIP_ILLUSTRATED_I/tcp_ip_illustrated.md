@@ -29,3 +29,8 @@ IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多
 ###  1.3 TCP/IP的分层
 
 ![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-3.jpg)
+
+### 1.4 互联网的地址
+
+五类IP地址如图：							
+![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-4.jpg)
