@@ -203,4 +203,27 @@ IP路由选择规则：
 
 ### 3.4 子网寻址
 
+A类和B类地址为主机号分配了太多的空间，一般会把（包括C类）主机号再分成一个子网号和一个主机号
 
+子网的划分缩减了路由表的规模，如图：				
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-5.jpg)
+	- 上图中所有的IP地址共有一个网络号140.252，而其内部有大量的子网
+	- 外部路由器并不知道这些子网的划分，只需要知道目的地址为140.252开头的，都需要通过路由器gateway，所以只需要一个路由条目
+
+### 3.5 子网掩码
+
+子网掩码：确定有多少比特用于子网号，多少比特用于主机号。网络号和子网号的位置均为1，主机号的位置均为0
+
+给定了**目的IP地址**和**子网掩码**后，再通过**本机IP**确定网络号和子网号的分界线，主机就可以确定目的地址类型：
+- 本子网上的IP
+- 本网络中其他子网的IP
+- 其他网路的IP
+
+### 3.6 特殊情况的IP地址
+
+![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-6.jpg)
+
+### 3.7 本书的子网
+
+![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-7.jpg)
+![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-8.jpg)
