@@ -257,4 +257,122 @@ A类和B类地址为主机号分配了太多的空间，一般会把（包括C�
 
 	是合法的，用了非连续的子网掩码（即前8位和后8位作为子网掩码，中间8位作为主机号），但反对使用
 
-6. 
+# 4. ARP地址解析协议
+
+- 地址解析协议ARP和RARP指的是将32位的IP地址和48位的以太网地址(mac地址)相互映射转化，如图：				
+	
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-1.jpg)
+
+### 4.2 FTP例子
+
+在敲入命令`ftp [hostname]`后，会进行以下步骤：
+1. 应用程序FTP调用`gethostbyname()`函数把主机名`hostname`转化成IP地址（即DNS解析）
+2. 用此IP地址请求连接，完成TCP连接
+3. 向目的地址发送IP数据报
+4. 如果目的地址在本地网络（同一个网络）上，IP数据报可以直接发送到目的主机上；如果不在同一个网络上，则通过路由表发送到下一站的路由器
+5. 若为以太网，需要将通过IP地址获得mac地址，即ARP协议的功能
+6. ARP发送一份ARP请求的以太网数据帧给以太网的每个主机（即广播）。数据帧中包含目的IP地址，请求内容 “如果你是这个IP地址的拥有者，请回答你的硬件地址”
+7. 目的主机收到ARP请求，会回应一个ARP应答（包含IP地址及对应的mac地址）
+8. 收到ARP应答，获得mac地址
+9. 发送IP数据报到目的主机
+
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-2.jpg)
+
+- 注意：点对点链路不使用ARP，没有mac地址一说
+
+### 4.3 ARP高速缓存
+
+每个主机都有一个ARP高速缓存，存放了最近IP和mac地址的映射，生存时间一般为20分钟
+
+可使用`arp -a`命令查看系统的ARP高速缓存
+
+当系统收到ARP应答或发送ARP应答时，都会把映射记录存入高速缓存
+
+### 4.4 ARP的分组格式
+
+ARP格式如图：								
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-3.jpg)
+
+### 4.5 ARP举例
+
+- 一般的例子`bsdi% telnet svr4 discard`			
+	 ![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-4.jpg)
+- 对不存在的主机发送ARP请求
+	- 因不会收到ARP应答，将多次超时后重新发送ARP请求，最后放弃请求
+- ARP高速缓存超时设置
+	- ARP高速缓存的条目中一般都要有超时值，完整的条目默认为20分钟，不完整的条目（即没有获取到对应的mac地址）默认为3分钟
+
+### 4.6 ARP代理
+
+![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-5.jpg)
+
+gemini主机在进行了对sun主机的ARP请求后，gemini的映射表会如下（即sun主机和netb主机对应的mac地址相同）：	
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-6.jpg)
+
+### 4.7 免费ARP
+
+指主机发送ARP请求查找自己IP地址的mac地址，如图：	
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-7.jpg)
+
+免费ARP的两个作用：
+- 确定是否有另一个主机与本主机设置了相同的IP。正常设置的情况下，免费ARP不会有应答
+- 通知以太网中的各主机更新高速缓存中的有关本主机条目（所有主机接收到广播的ARP请求都会进行高速缓存的更新）
+
+### 4.8 arp命令
+
+arp命令参数：
+- `-a`，查询高速缓存的内容
+- `-d`，删除高速缓存的某项内容
+- `-s`，增加高速缓存的内容（默认是永久性的）,temp指定超时性，pub指定为ARP代理
+
+### 习题
+
+1. 执行命令`bsdi％ rsh svr4 arp -a`（在svr4主机上运行arp -a）前，目的主机的ARP高速缓存是空的。执行该命令后，发生什么
+
+	引起在两个主机之间交换IP数据报，即使在执行rsh命令之前，svr4主机的ARP缓存是空的，当rsh服务器执行arp命令时，必须保证ARP缓存中有bsdi主机的相关条目
+
+2. 如何判断主机是否能正确处理非必要的ARP请求
+
+	判断主机A是否能正确处理。需要另一台主机B，首先保证主机A缓存中没有B相关的条目，然后手动在主机A缓存中加上一条temp选项的主机B的错误条目。并在主机B上发送一个免费ARP请求，观察主机A是否能够正确的更新缓存中的条目
+
+3. 在ARP等待应答期间，如何处理在这期间收到相同目的IP地址发来的多个数据包
+
+	见11.9节
+
+4. 略
+
+# 5. RARP逆地址解析协议
+
+有磁盘的主机一般从配置文件中读取IP地址，**无磁盘**的主机就要先从接口卡中获取到硬件地址，然后通过RARP请求获取IP地址
+
+### 5.2 RARP分组格式
+
+分组格式与ARP基本一致，只有帧类型码、操作码不同；和ARP一样，RARP	请求也是广播的，应答也是单播的
+
+### 5.3 RARP举例
+
+sun主机广播RARP请求，由bsdi上的RARP服务程序响应：	
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/5-1.jpg)
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/5-2.jpg)
+
+### 5.4 RARP服务器的设计
+
+RARP服务的设计比较复杂（通常是用户进程），而ARP服务的设计很简单（通常是在内核中实现的）
+
+- 作为用户进程的RARP服务
+	- 一般要为多个主机（网络上的所有无盘系统）提供地址映射，映射保存在一个本地磁盘文件中。内核不读取此文件，所以一般都是用户进程来提供此服务
+	- RARP服务的实现是与系统捆绑在一起的，因为要发送特殊类型的以太网数据帧，实现比较复杂
+- 每个网络多个RARP服务
+	- RARP请求是在硬件层上进行广播的，所以不会进行路由器转发。一个网络上一般都要提供多个RARP服务
+	- 当多个服务都产生应答时，发送方选用最先达到的RARP请求
+
+### 习题
+
+1. RARP需要不同的帧类型字段吗，可以让ARP和RARP都使用相同的值吗
+
+	理论上说不同的帧类型字段不是必须的，因为ARP和RARP分组的操作码都有一个不同的值（1~4）。但是RARP服务是用户进程，ARP服务是内核中实现的，设计成不同的帧类型方便处理
+
+2. 当多个RARP服务都产生应答时，如何防止响应冲突
+
+	- 不同的服务器设置不同的响应延迟，可避免冲突
+	- 设置一个主服务器，其他是次服务器。次服务器只在主服务器关机情况下才工作
