@@ -1,9 +1,9 @@
 # 6. ICMP Internet控制报文协议
 
 - ICMP报文是在IP数据报内部传输的，如图：			
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/6-1.jpg)
+	![](6-1.jpg)
 - ICMP报文的格式如图：					
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/6-2.jpg)
+	![](6-2.jpg)
 
 ### 6.2 ICMP报文的类型
 
@@ -21,5 +21,4 @@
 ICMP地址掩码请求用于无盘系统在引导过程中获取自己的子网掩码，与RARP类似，系统会广播ICMP地址掩码请求
 
 - ICMP地址掩码请求与应答报文格式如图：				
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/6-3.jpg)
 	![](6-3.jpg)

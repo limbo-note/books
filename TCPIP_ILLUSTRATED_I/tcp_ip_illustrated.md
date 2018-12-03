@@ -66,8 +66,8 @@
 	- SNMP简单网络管理协议
 	- HTTP等									
 	
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-1.jpg)
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-2.jpg)
+![](1-1.jpg)
+![](1-2.jpg)
 
 IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多个网络接口层（因为它连接了两个或多个网络）。
 
@@ -75,12 +75,12 @@ IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多
 
 ###  1.3 TCP/IP的分层
 
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-3.jpg)
+![](1-3.jpg)
 
 ### 1.4 互联网的地址
 
 - 五类IP地址如图：							
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-4.jpg)
+	![](1-4.jpg)
 
 互联网络信息中心只分配网络号，主机号由各系统的管理员自行分配。
 
@@ -94,12 +94,12 @@ IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多
 
 ### 1.6 封装
 
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-5.jpg)
+![](1-5.jpg)
 
 ### 1.7 分用
 
 从协议栈中由底向上升，去掉各层协议的报文首部，同时确定上层协议类型，这叫做**分用**，过程如图：		
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-6.jpg)
+![](1-6.jpg)
 
 协议ICMP/IGMP和IP协议是同一层，但是都被封装在IP数据报中
 
@@ -121,11 +121,11 @@ IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多
 ### 1.12 标准的简单服务
 
 - 一些常用的标准的服务程序：			
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-7.jpg)
+	![](1-7.jpg)
 - 客户端常用的程序选择Telnet
 
 ### 1.16 本书的测试网络环境
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-8.jpg)
+![](1-8.jpg)
 
 ### 习题
 
@@ -135,7 +135,7 @@ IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多
 
 2. NSFNET网络上登记的网络数的变化趋势
 
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/1-9.jpg)
+	![](1-9.jpg)
 
 # 2. 链路层
 
@@ -148,12 +148,12 @@ IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多
 
 ### 2.2 以太网和IEEE802封装
 
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/2-1.jpg)
+![](2-1.jpg)
 
 ### 2.4 SLIP串行线路IP
 
 - SLIP协议定义的格式：						
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/2-2.jpg)
+	![](2-2.jpg)
 - 缺陷
 	- 无IP地址信息
 	- 没有类型字段，线路不能同时使用其它协议
@@ -162,7 +162,7 @@ IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多
 ### 2.6 PPP点对点协议
 
 - PPP协议格式：								
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/2-3.jpg)
+	![](2-3.jpg)
 - 相比SLIP，有很多优点
 	- 支持串行线路上的多种协议，不只是IP协议
 	- 有校验和字段
@@ -175,7 +175,7 @@ IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多
 - 用以允许运行在同一台主机上的客户程序和服务器程序通过TCP/IP进行通信，大多数系统把127.0.0.1这个IP分配给此接口，并命名为localhost
 
 - 环回接口处理IP数据报的简单过程：					
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/2-4.jpg)
+	![](2-4.jpg)
 	- 用传输层和IP层的方法来处理环回数据，会经过传输层和IP层完整的处理过程，简化了设计
 
 ### 2.8 最大传输单元MTU
@@ -204,11 +204,11 @@ IP协议是不可靠的，TCP才是可靠的。一个路由器具有两个或多
 ### 3.2 IP首部
 
 - IP数据报格式如下：							
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-1.jpg)
+	![](3-1.jpg)
 	- 目前协议版本号为4，即IPV4
 	- 首部长度以4字节为单位，所以首部最长60个字节。IP首部长度必须为4字节的整数倍，不足补0
 	- 不同应用程序有不同的推荐服务类型字段，如下图
-		![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-2.jpg)
+		![](3-2.jpg)
 	- 总长度是整个IP数据报的长度，以字节为单位，所以IP数据报最长可达65535字节（会受到MTU的限制）。当数据报被分片时，该字段也会变化
 	- TTL设置数据报可以经过的最多路由器数。初始值由源主机设置（一般为32或64），每经过一个路由器就减1。达到0时，该数据报就丢弃，并返回ICMP报文
 	- 协议字段用于对IP数据报进行分用
@@ -239,9 +239,9 @@ IP路由选择规则：
 
 两个例子：
 - 同一以太网的两个主机的数据传送：				
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-3.jpg)
+	![](3-3.jpg)
 - 不同网络的主机的数据传送：						
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-4.jpg)
+	![](3-4.jpg)
 	- 大多数情况下使用的是默认路由
 	- 数据报中的目的IP地址始终不变
 	- 链路层的目的地址始终是下一站的链路层地址
@@ -251,7 +251,7 @@ IP路由选择规则：
 A类和B类地址为主机号分配了太多的空间，一般会把（包括C类）主机号再分成一个子网号和一个主机号
 
 - 子网的划分缩减了路由表的规模，如图：				
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-5.jpg)
+	![](3-5.jpg)
 	- 上图中所有的IP地址共有一个网络号140.252，而其内部有大量的子网
 	- 外部路由器并不知道这些子网的划分，只需要知道目的地址为140.252开头的，都需要通过路由器gateway，所以只需要一个路由条目
 
@@ -266,12 +266,12 @@ A类和B类地址为主机号分配了太多的空间，一般会把（包括C�
 
 ### 3.6 特殊情况的IP地址
 
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-6.jpg)
+![](3-6.jpg)
 
 ### 3.7 本书的子网
 
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-7.jpg)
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/3-8.jpg)
+![](3-7.jpg)
+![](3-8.jpg)
 
 ### 3.8 ifconfig命令
 看后续章节慢慢补充
@@ -306,7 +306,7 @@ A类和B类地址为主机号分配了太多的空间，一般会把（包括C�
 
 - 地址解析协议ARP和RARP指的是将32位的IP地址和48位的以太网地址(mac地址)相互映射转化，如图：				
 	
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-1.jpg)
+	![](4-1.jpg)
 
 ### 4.2 FTP例子
 
@@ -321,7 +321,7 @@ A类和B类地址为主机号分配了太多的空间，一般会把（包括C�
 8. 收到ARP应答，获得mac地址
 9. 发送IP数据报到目的主机
 
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-2.jpg)
+	![](4-2.jpg)
 
 - 注意：点对点链路不使用ARP，没有mac地址一说
 
@@ -336,12 +336,12 @@ A类和B类地址为主机号分配了太多的空间，一般会把（包括C�
 ### 4.4 ARP的分组格式
 
 ARP格式如图：								
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-3.jpg)
+	![](4-3.jpg)
 
 ### 4.5 ARP举例
 
 - 一般的例子`bsdi% telnet svr4 discard`			
-	 ![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-4.jpg)
+	 ![](4-4.jpg)
 - 对不存在的主机发送ARP请求
 	- 因不会收到ARP应答，将多次超时后重新发送ARP请求，最后放弃请求
 - ARP高速缓存超时设置
@@ -349,15 +349,15 @@ ARP格式如图：
 
 ### 4.6 ARP代理
 
-![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-5.jpg)
+![](4-5.jpg)
 
 gemini主机在进行了对sun主机的ARP请求后，gemini的映射表会如下（即sun主机和netb主机对应的mac地址相同）：	
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-6.jpg)
+	![](4-6.jpg)
 
 ### 4.7 免费ARP
 
 指主机发送ARP请求查找自己IP地址的mac地址，如图：	
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/4-7.jpg)
+	![](4-7.jpg)
 
 免费ARP的两个作用：
 - 确定是否有另一个主机与本主机设置了相同的IP。正常设置的情况下，免费ARP不会有应答
@@ -397,8 +397,8 @@ arp命令参数：
 ### 5.3 RARP举例
 
 sun主机广播RARP请求，由bsdi上的RARP服务程序响应：	
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/5-1.jpg)
-	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/5-2.jpg)
+	![](5-1.jpg)
+	![](5-2.jpg)
 
 ### 5.4 RARP服务器的设计
 
