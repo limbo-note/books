@@ -1,0 +1,25 @@
+# 6. ICMP Internet控制报文协议
+
+- ICMP报文是在IP数据报内部传输的，如图：			
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/6-1.jpg)
+- ICMP报文的格式如图：					
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/6-2.jpg)
+
+### 6.2 ICMP报文的类型
+
+- 不同类型的ICMP报文由类型字段和代码字段共同决定，分为查询和差错报文
+- ICMP差错报文始终包含IP首部和产生ICMP差错报文的IP数据报的前8个字节
+- 不会产生ICMP差错报文的情况：
+	- ICMP差错报文（ICMP查询报文是可能产生差错报文的）
+	- 目的地址是广播或多播地址的IP数据报
+	- 链路层广播的数据报
+	- 不是IP分片的第一片
+	- 源地址不是单个主机的数据报（零地址、环回地址、广播多播地址）
+
+### 6.3 ICMP地址掩码请求与应答
+
+ICMP地址掩码请求用于无盘系统在引导过程中获取自己的子网掩码，与RARP类似，系统会广播ICMP地址掩码请求
+
+- ICMP地址掩码请求与应答报文格式如图：				
+	![](https://github.com/limbo-note/books/blob/master/TCPIP_ILLUSTRATED_I/6-3.jpg)
+	![](6-3.jpg)
