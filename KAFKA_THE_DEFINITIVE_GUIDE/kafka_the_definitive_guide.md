@@ -32,6 +32,11 @@
 示例代码如下：						
 	![](4-4.jpg)
 
+关于poll方法注意事项：
+	
+- 读取分区中的数据是通过发起一个fetch请求来执行的，但消费者的poll方法只是可能会发起fetch请求。原因：每次发起fetch请求时，读取到的数据是有限制的，通过配置项max.partition.fetch.bytes来限制的，而在执行poll方法时，会根据配置项个max.poll.records来限制一次最多poll多少个record，所以在record没有poll完之前，调用poll方法并不会发起fetch请求
+- 可能出现这样的情况： 假如fetch到了100个record，放到本地缓存后，限制每次只能poll出15个record。需要执行7次poll才能将这一次fetch的数据消费完毕。前6次是每次poll15个record，最后一次是poll出10个record
+
 **一个消费者对于一个线程，否则将造成线程不安全**
 
 ### 4.5 消费者的配置
@@ -72,5 +77,43 @@
 
 提交偏移量的方式：
 - 自动提交
-	- 
-	
+	- 每auto.commit.interval.ms的时间，poll方法会将最大偏移量提交
+	- 会带来消息被重复处理的问题
+- 提交当前偏移量
+	- 处理完数据之后手动调用consumer.commitSync()方法，避免消息被重复处理
+	- 注意该方法提交的是一次fetch的所有数据所产生的偏移量，不受当前获取的records的偏移量影响
+- 异步提交
+	- consumer.commitSync()会阻塞，等待Broker做出回应
+	- consumer.commitAsync()为异步提交，但其在发生错误时不会自动进行重试。但支持回调，在收到响应时会调用回调函数，可用于记录错误或重试
+- 同步和异步结合
+	![](4-7.jpg)
+- 提交特定偏移量
+	- consumer.commitSync()和commitAsync()方法可以有参数，指定特定偏移量提交
+
+### 4.7 再均衡监听器
+
+subscribe()方法可有一个ConsumerRebalanceListener监听器参数，在触发再均衡时，会触发此监听器
+
+监听器需实现两个方法：
+- onPartitionRevoked()：在再均衡开始之前和消费者停止读取消息之后调用，即回收消费者的分区时
+- onPartitionAssigned()：在重新分配分区后和消费者开始读取消息之前被调用，即重新分配分区后
+
+### 4.8 从特定偏移量读取消息
+
+结合seek()方法
+
+### 4.9 安全退出
+
+在另一个线程中调用comsumer.wakeup()可使该consumer退出轮询，该consumer会在自己的线程中抛出WakeupException异常并结束轮询，而且最好在最后加上finally语句块并调用consumer.close()方法，以提交最新的偏移量
+
+![](4-8.jpg)
+
+### 4.10 反序列化器
+
+kafka自带反序列化器
+
+### 4.11 独立消费者
+
+即不订阅主题，直接为自己分配分区进行消费
+
+![](4-9.jpg)
