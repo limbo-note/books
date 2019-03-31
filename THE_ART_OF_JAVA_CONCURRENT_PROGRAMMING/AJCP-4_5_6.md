@@ -1,3 +1,21 @@
+- [4. 并发编程基础](#4-并发编程基础)
+	- [4.1 线程](#41-线程)
+	- [4.2 启动和终止线程](#42-启动和终止线程)
+	- [4.3 线程间通信](#43-线程间通信)
+	- [4.4 线程应用](#44-线程应用)
+- [5. Java中的锁](#5-java中的锁)
+	- [5.1 Lock](#51-lock)
+	- [5.2 队列同步器AQS](#52-队列同步器aqs)
+	- [5.3 重入锁](#53-重入锁)
+	- [5.4 读写锁](#54-读写锁)
+	- [5.5 LockSupport](#55-locksupport)
+	- [5.6 Condition](#56-condition)
+- [6. Java并发容器和框架](#6-java并发容器和框架)
+	- [6.1 ConcurrentHashMap](#61-concurrenthashmap)
+	- [6.2 ConcurrentLinkedQueue](#62-concurrentlinkedqueue)
+	- [6.3 BlockingQueue](#63-blockingqueue)
+	- [6.4 Fork Join框架](#64-fork-join框架)
+
 # 4. 并发编程基础
 
 ### 4.1 线程
@@ -100,4 +118,93 @@ AQS基于模板模式
 		![](5-7.jpg)
 	- 独占锁同步器的release方法：					
 		![](5-8.jpg)
-	- 共享锁
+	- 共享锁不同之处就是同步状态上限不为1，可以有多个线程同时获取与释放，故获取与释放时都需要CAS操作
+	- 带超时机制的独占锁的acquire内方法：					
+		![](5-9.jpg)
+	- 自定义同步锁示例（只允许两个线程同时访问）：						
+		![](5-10.jpg)
+
+### 5.3 重入锁
+
+- 重入实现原理：					
+	![](5-11.jpg) 
+
+公平性锁保证了锁的获取按照FIFO原则，而代价是进行大量的线程切换。非公平性锁虽然可能造成线程“饥饿”，但极少的线程切换，保证了其更大的吞吐量
+
+### 5.4 读写锁
+
+- 读写状态设计								
+	![](5-12.jpg)
+	用一个整型的高16位表示读状态，低16位表示写状态 
+- 写锁主要实现：					
+	![](5-13.jpg)
+- 读锁主要实现：						
+	![](5-14.jpg)
+- 锁降级
+	- 先获取写锁，再获取读锁（防止写锁释放之后，其它线程对数据进行写操作），再释放写锁的过程
+
+### 5.5 LockSupport
+
+- park: 使线程进入等待状态
+- parkNanos: 带超时参数
+- parkUntil: 带超时参数（直到某个时刻）
+- unpark: 唤醒线程
+
+### 5.6 Condition
+
+- 与object中的监视器方法的对比：
+	![](5-15.jpg)
+
+- synchronized相当于lock.lock(), object.wait()相当于condition.await():
+	![](5-16.jpg)
+
+
+Condition实现原理：
+- Condition是AQS的内部实现类
+- 相当于AQS中有一个同步队列（相当于锁池），有很多个等待队列（相当于等待池，new了几个condition就有几个等待池，这点与object内的方法不同）
+	![](5-17.jpg)
+- Condition调用await()方法原理：					
+	![](5-18.jpg)
+- Condition调用signal()方法原理：						
+	![](5-19.jpg)
+	同理，signalAll()方法就是将等待队列中的**全部节点**都移动到同步队列中，并**唤醒**所有移动节点的线程
+
+# 6. Java并发容器和框架
+
+### 6.1 ConcurrentHashMap
+不太全面
+
+### 6.2 ConcurrentLinkedQueue
+不太全面
+
+### 6.3 BlockingQueue
+
+- 阻塞队列的插入和移除四套处理方法：							
+	![](6-1.jpg)
+- 各种阻塞队列：									
+	![](6-2.jpg)
+- 阻塞队列实现原理：				
+	- 等待通知模式：					
+		![](6-3.jpg)
+
+### 6.4 Fork Join框架
+类似map/reduce，fork分割任务，join合并各子任务的结果
+
+- 工作窃取算法
+	- 每个线程一个双端队列，线程做完自己的任务，就去其它线程的队列中取出任务继续执行
+	- 窃取线程从尾部拿任务，被窃取线程从头部拿任务，可减少两者的竞争
+- ForkJoinTask两个子类
+	- RecursiveAction：用于没有返回结果的任务
+	- RecursiveTask：用于有返回结果的任务
+	- ForkJoinTask需要通过ForkJoinPool来执行
+- 一个计算1+2+3+4的实例：					
+	![](6-4.jpg)
+- 可使用isCompletedAbnormally()在主线程中捕获子线程的异常
+- 原理：
+	- ForkJoinPool由ForkJoinTask数组和ForkJoinWorkerThread数组组成，ForkJoinTask数组负责将存放程序提交给ForkJoinPool的任务，而ForkJoinWorkerThread数组负责执行这些任务
+	- fork
+		- 调用ForkJoinTask的fork方法时，程序会调用ForkJoinWorkerThread的pushTask方法异步地执行这个任务，然后立即返回结果
+		- pushTask方法把当前任务存放在ForkJoinTask数组队列里。然后再调用ForkJoinPool的signalWork()方法唤醒或创建一个工作线程来执行任务
+	- join
+		- 阻塞当前线程并等待获取结果
+		- 细节见书
