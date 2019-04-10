@@ -8,7 +8,7 @@
 - 每个线程都需要栈内存，内存浪费
 - 上下文切换开销
 
-非阻塞函数，即java.nio类库，搭配选择器selector 		
+非阻塞函数，即java.nio类库，搭配选择器selector 			
 ![](1-2.jpg)
 - 使用较少的线程就可以处理许多连接
 - 没有IO时，线程也可以处理其他任务
@@ -88,7 +88,7 @@ Channel—Socket；EventLoop—控制流、多线程处理、并发；ChannelFut
 	- NioDatagramChannel
 	- NioSctpChannel
 	- NioSocketChannel
-- EventLoop 接口
+- EventLoop 接口								
 	![](3-1.jpg)
 	- 一个 EventLoopGroup 包含一个或者多个 EventLoop
 	- 一个 EventLoop 在它的生命周期内只和一个 Thread 绑定
@@ -113,4 +113,17 @@ Channel—Socket；EventLoop—控制流、多线程处理、并发；ChannelFut
 	- 是	ChannelHandler的子类，用于接发数据前后加解码
 	- 对入站数据来说，channelRead已经被重写了，其中调用了decode()进行解码，并将已解码的字节转发给下一个ChannelInboundHandler；出站则相反
 - SimpleChannelInboundHandler
-	-  
+	- 继承于ChannelInboundHandlerAdapter，是更具体的一个类
+	- 可泛型指定类型，隐式解码，接收到的数据就是指定的类型
+
+### 3.3 引导
+
+- Bootstrap客户端引导
+	- 连接到远程主机和端口
+	- 只需要1个EventLoopGroup
+- ServerBootstrap服务器引导
+	- 绑定到一个本地端口
+	- 需要2个EventLoopGroup（一个用于接收连接请求ServerChannel，一个用于处理已连接的Channel）
+	![](3-2.jpg)
+
+# 4. 传输
