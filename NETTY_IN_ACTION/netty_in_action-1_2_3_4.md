@@ -1,3 +1,19 @@
+- [1. Netty 异步和事件驱动](#1-netty-异步和事件驱动)
+	- [1.1 Java 网络编程](#11-java-网络编程)
+	- [1.2 Netty 简介](#12-netty-简介)
+	- [1.3 Netty 核心组件](#13-netty-核心组件)
+- [2. 使用Netty](#2-使用netty)
+	- [2.3 Echo 服务器](#23-echo-服务器)
+	- [2.4 Echo 客户端](#24-echo-客户端)
+- [3. Netty 的组件和设计](#3-netty-的组件和设计)
+	- [3.1 Channel EventLoop 和 ChannelFuture](#31-channel-eventloop-和-channelfuture)
+	- [3.2 ChannelHandler 和 ChannelPipeline](#32-channelhandler-和-channelpipeline)
+	- [3.3 引导](#33-引导)
+- [4. 传输](#4-传输)
+	- [4.1 传输迁移](#41-传输迁移)
+	- [4.2 传输 API](#42-传输-api)
+	- [4.3 内置的传输](#43-内置的传输)
+
 # 1. Netty 异步和事件驱动
 
 ### 1.1 Java 网络编程
@@ -127,3 +143,34 @@ Channel—Socket；EventLoop—控制流、多线程处理、并发；ChannelFut
 	![](3-2.jpg)
 
 # 4. 传输
+### 4.1 传输迁移
+在不用Netty的情况下，从BIO的程序转换到NIO的程序，需要大改，两者几乎不同（NIO有Selector，代码结构完全不同）
+
+若使用Netty，两者的代码结构几乎相同（只有使用的EventLoopGroup和使用的SocketChannel类型不同），因为 Netty 为每种传输的实现都暴露了相同的 API，都依赖于接口 Channel、ChannelPipeline 和 ChannelHandler
+
+### 4.2 传输 API
+核心是Channel，类图如下：					
+![](4-1.jpg)
+
+Channel常用方法：					
+![](4-2.jpg)
+Channel是线程安全的，可以多个线程同时写数据
+
+### 4.3 内置的传输
+
+- NIO
+	- 即java.nio下那一套，Netty是基于此的，且完全地隐藏了这些 NIO 的内部细节
+	- 零拷贝：指的是不需要将其从内核空间复制到用户空间
+- Epoll（用于 Linux 的本地非阻塞传输）
+	- (....)需要补充背景知识
+	- Netty中有EpollEventLoopGroup
+- OIO（即BIO）
+	- 使用单个线程来处理多个套接字， 很容易导致一个套接字上的阻塞操作也捆绑了所有其他的套接字
+	- Netty实现的BIO：
+		- 利用I/O操作的超时参数
+		- 如果操作在指定的时间间隔内没有完成，则将会抛出一个SocketTimeout Exception。 Netty将捕获这个异常并继续处理循环。在EventLoop下一次运行时，它将再次尝试
+- JVM的 Local 传输
+	- 用于在同一个 JVM 中运行的客户端和服务器程序之间的异步通信
+- Embedded 传输
+	- EmbeddedChannel，详见第9章
+	- 可创建单元测试用例
