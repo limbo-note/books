@@ -1,7 +1,3 @@
----
- typora-root-url: ./
----
-
 [TOC]
 
 # 1. Spring之旅
@@ -16,11 +12,11 @@
 
   - 紧耦合的构造模式
 
-  ![](/1-1.jpg)
+  ![](1-1.jpg)
   
   - 构造器依赖注入
 
-  ![](/1-2.jpg)
+  ![](1-2.jpg)
 
   - ApplicationContext 创建和组装bean，xml文件配置的方式则用ClassPathXmlApplicationContext ，该类加载位于应用程序类路径下的一个或多个XML配置文件 
 
@@ -43,11 +39,11 @@
 
 - Bean的生命周期
 
-  ![](/1-3.jpg)
+  ![](1-3.jpg)
 
 ### 1.3 Spring架构
 
-![](/1-4.jpg)
+![](1-4.jpg)
 
 # 2. 装配Bean
 
@@ -83,7 +79,7 @@
 
   - `@Bean`注解
 
-    ![](/2-1.jpg)
+    ![](2-1.jpg)
 
 ### 2.4 XML显式配置
 
@@ -93,7 +89,7 @@
 
     - `<util:list> `创建集合类型的bean
 
-        ![](/2-2.jpg)
+        ![](2-2.jpg)
 
 ### 2.5 导入和混合配置
 
@@ -122,7 +118,7 @@
 
 - 当自动装配的可选bean不是唯一时，spring就无法做出选择而抛出异常，如：
   
-  ![](/3-1.jpg)
+  ![](3-1.jpg)
 
 - 在`@Component`注解或`@Bean`注解上使用`@Primary `注解指定最优先或XML中的`primary="true"`属性
 - 在`@Autowired`注解上使用`@Qualifier("beanId")` 注解指定注入bean，在`@Component`注解或`@Bean`注解上使用`@Qualifier("beanId")`注解为类分配beanID
@@ -144,7 +140,7 @@
 
   - 声明属性源并通过Spring的Environment来检索属性（`@PropertySource`注解和`Environment` ），如
 
-    ![](/3-2.jpg)
+    ![](3-2.jpg)
 
     - `Environment`还提供了一些方法来检查哪些profile处于激活状态 
 
@@ -198,35 +194,35 @@
 
 - 编写切点
 
-  ![](/4-1.jpg)
+  ![](4-1.jpg)
 
 - bean()指示器，限制切点只匹配特定的bean 
 
-  ![](/4-2.jpg)
+  ![](4-2.jpg)
 
 ### 4.3 使用注解创建切面 
 
 - 定义切面
 
-  ![](/4-3.jpg)
+  ![](4-3.jpg)
 
   配置：
 
-  ![](/4-4.jpg)
+  ![](4-4.jpg)
 
   或：
 
-  ![](/4-5.jpg)
+  ![](4-5.jpg)
 
 - 环绕通知
 
-  ![](/4-6.jpg)
+  ![](4-6.jpg)
 
   - 若不调用proceed()方法，将会阻塞
 
 - 处理切点方法中的参数 
 
-  ![](/4-7.jpg)
+  ![](4-7.jpg)
 
 - 通过注解引入新功能 （切面可以为Spring bean添加新方法 ），`@DeclareParents` 注解
 
