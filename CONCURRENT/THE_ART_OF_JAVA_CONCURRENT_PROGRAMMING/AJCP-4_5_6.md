@@ -24,7 +24,9 @@
 
 - 线程的状态
 	- obj.wait()方法是将当前线程进行等待状态，并释放obj的锁，所以在此之前必须先获得过obj的锁
-	![](4-1.jpg)
+	  ![](4-1.jpg)
+	
+	  ![](4-0.jpg)
 - Daemon线程
 	- 用thread.setDaemon(true)将线程设置为Daemon线程
 	- 在Java虚拟机退出时Daemon线程中的finally块并不一定会执行,甚至连Daemon线程的run方法都不一定会执行
@@ -64,6 +66,7 @@
 - join实现原理							
 	![](4-7.jpg) 
 - ThreadLocal
+	
 	- 见博客[https://blog.csdn.net/wuyangyang555/article/details/82774693](https://blog.csdn.net/wuyangyang555/article/details/82774693 "ThreadLocal解析")
 
 ### 4.4 线程应用
@@ -71,6 +74,7 @@
 - 等待超时模式						
 	![](4-8.jpg) 
 - 简单的数据库连接池实例（连接池原理）
+	
 	- 关键是超时机制（该模式适用于其他资源获取）
 - 线程池技术及示例（线程池原理）
 	- 预先创建了若干数量的线程，并且不能由用户直接对线程的创建进行控制，在这个前提下**重复使用**固定或较为固定数目的线程来完成任务的执行
