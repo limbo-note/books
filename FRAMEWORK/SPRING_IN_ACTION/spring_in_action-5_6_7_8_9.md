@@ -207,3 +207,30 @@ Servlet请求在异常情况下的输出依然是Servlet响应，Spring有多种
 
 # 9. 保护Web应用 
 
+### 9.1 Spring Security
+
+在Web请求级别和方法调用级别处理身份认证和授权，基于Filter实现的框架
+
+- 模块
+
+  - 至少要包含Core和Configuration这两个模块 
+
+- 过滤Web请求
+
+  - 只需要配置DelegatingFilterProxy ，Spring Security 会通过此类将处理逻辑委托给已注入的Filter（类似DispatcherServlet）
+
+    ![](9-1.jpg)
+
+  - 可以用xml配置，也可以扩展AbstractSecurityWebApplicationInitializer 类来自动配置（类似DispatcherServlet）
+  - DelegatingFilterProxy会拦截发往应用中的请求， 并将请求委托给ID为springSecurityFilterChain 的bean 
+
+(...................) 框架应用，先搞懂Spring原理，等理解再来看应用
+
+### 9.2 选择查询用户详细信息的服务 
+
+### 9.3 拦截请求 
+
+### 9.4 认证用户 
+
+### 9.5 保护视图 
+
