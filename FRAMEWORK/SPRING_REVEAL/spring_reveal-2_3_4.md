@@ -87,8 +87,9 @@ Spring提供两种容器：
   - `<import resource="B.xml"/>` 引入其他xml
   - `<alias>` 为bean设定别名，如`<alias name="dataSourceForMasterDatabase" alias="masterDataSource"/>` 
 - `<bean>`
-  - id指定唯一标识符，name指定别名，class指定类
-
+  
+- id指定唯一标识符，name指定别名，class指定类
+  
 - 注入
   - 构造注入
     - type指定参数类型
@@ -106,6 +107,7 @@ Spring提供两种容器：
   - `lazy-init` 属性
 
 - bean标签的parent和abstract属性
+  
   - bean依赖关系的继承
 - scope
   - singleton ：单例，与IoC容器“几乎”拥有相同的“寿命” 
@@ -137,9 +139,9 @@ Spring提供两种容器：
 - 关于作用域
 
   - prototype类型的bean指的是每次注入都会是不同的实例对象，但一个对象注入后，不论怎么访问该实例，都是同一个
-  - `lookup-method`标签 、BeanFactoryAware接口、`replaced-method`标签，见书
+  - `lookup-method`标签 （方法注入）、BeanFactoryAware接口、`replaced-method`标签，见书
 
-### 4.4 容器背后原理
+### 4.4 <u>容器背后原理</u>
 
 #### 两个阶段
 
@@ -216,8 +218,56 @@ bean的生命周期全部由Spring管理，不再是“new完后被使用，脱�
 
       ![](4-18.jpg)
 
-  - 容器根据BeanDefintion ，结合InstantiationStrategy 来构造实例，但会将实例放在BeanWrapper 类中，再返回相应的BeanWrapper实例，第一步结束。BeanWrapper可以设置、访问bean的属性值，返回BeanWrapper 就是为了第二步
+  - 容器根据BeanDefintion ，结合InstantiationStrategy 来构造实例，但会将实例放在BeanWrapper 类中，再返回相应的BeanWrapper实例，第一步结束。BeanWrapper可以设置、访问bean的属性值，返回BeanWrapper 就是为了第二步（设置对象属性）
 
     ![](4-19.jpg)
 
 - 各色的Aware接口 
+
+  - 属性和常规依赖设置完成后，会检查是否实现了Aware系列的接口，若是，则需将Aware接口中规定的依赖注入给对象
+  - 对BeanFactory 类型的容器：
+    - BeanNameAware ：对应的beanName设置到当前对象实例 
+    - BeanClassLoaderAware ：将其Classloader注入当前对象实例 
+    - BeanFactoryAware ：将BeanFactory 容器注入，实例拥有一个BeanFactory容器的引用 
+  - 对ApplicationContext ：
+    - 实现 ResourceLoaderAware、ApplicationEventPublisherAware 、MessageSourceAware、 ApplicationContextAware 都是会将ApplicationContext 设置到对象实例内，由于ApplicationContext 实现了很多接口，每一种注入都是被当成不同的角色来使用的，充当的角色就是Aware接口的前缀
+
+- BeanPostProcessor 
+
+  - BeanFactoryPostProcessor 在容器启动阶段，处理BeanDefinition ；类似，BeanPostProcessor 在实例化阶段，处理实例化后的对象实例 
+
+  - 两个接口方法 postProcessBeforeInitialization （前置处理）、postProcessAfterInitialization （后置处理）
+
+  - ApplicationContext 对于的Aware接口的注入就是通过BeanPostProcessor （子类ApplicationContextAwareProcessor）实现的，源码如下：
+
+    ![](4-20.jpg)
+
+  - 还可利用BeanPostProcessor 做 替换当前对象实例或者字节码增强当前对象实例 等功能，AOP中也使用其来生成代理对象
+
+  - 自定义的BeanPostProcessor ：
+
+    - 一个例子说明
+
+      ![](4-21.jpg)
+    
+    - 与BeanFactoryPostProcessor 一样，需要注册到容器中才能被使用；方法也类似，BeanFactory类型直接编码，ApplicationContext类型配置直接注册即可，容器自动识别
+
+- InitializingBean和init-method 
+  - 某个业务对象实例化完成后，还不能处于可以使用状态，需要对其状态进行初始化的调整，就可使其实现InitializingBean接口，afterPropertiesSet() 会被调用
+  - InitializingBean侵入性较强，可在bean定义处使用`init-method` 标签，指定需要先调用的方法名
+
+- DisposableBean与destroy-method 
+
+  - 类似InitializingBean和init-method 
+
+  - 指定对象销毁的方法，在对象销毁之前，会执行这些逻辑（如释放连接），只检查singleton类 
+
+    ![](4-22.jpg)
+
+  - 需要在代码里触发这个销毁，否则destroy-method 不会被执行（与init-method 不同）
+
+    - BeanFactory: `((ConfigurableListableBeanFactory)container).destroySingletons();` 
+
+    - ApplicationContext :
+
+      `((AbstractApplicationContext)container).registerShutdownHook();` 
