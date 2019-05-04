@@ -111,7 +111,7 @@ IoC容器中的Pointcut：
 
 都是普通的Java对象，可以将其当成bean一样使用
 
-### 9.3 Spring AOP中的 Advice
+### 9.3 Spring AOP中的Advice
 
 ![](9-0.jpg)
 
@@ -156,4 +156,102 @@ IoC容器中的Pointcut：
 每一个目标对象都对应一个Advice对象，为不同的实例保存了状态
 
 - Introduction是Spring AOP唯一的per-instance Advice
+
   - 可以在不改动目标类定义的情况下，为目标类添加新属性和行为
+
+    ![](9-7.jpg)
+
+### 9.4 Spring AOP中的Aspect
+
+Aspect定义中可以有多个Pointcut和多个Advice，Spring中的Aspect为Advisor，通常只有一个Pointcut和一个Advice
+
+Advisor两大类，PointcutAdvisor和IntroductionAdvisor：
+
+![](9-8.jpg)
+
+#### PointcutAdvisor家族
+
+均只定义一个Pointcut和一个Advice
+
+![](9-9.jpg)
+
+- DefaultPointcutAdvisor：除Introduction的Advice，可以指定任意类型的Pointcut和Advice
+- NameMatchMethodPointcutAdvisor：限定了只可使用NameMatchMethodPointcut，Advice与DefaultPointcutAdvisor一样
+
+- RegexpMethodPointcutAdvisor：逻辑类似
+
+#### IntroductionAdvisor家族
+
+只能用于类级别的拦截，只能使用Introduction类型的Advice
+
+![](9-10.jpg)
+
+- Ordered的作用
+  - 通常会有多个横切关注点，系统中会有多个Advisor，当它们的切点有交集时，执行它们Advice的横切逻辑的顺序就由Ordered来指定
+  - 某些情况下顺序不正确，会导致某些Advice无法达到预期效果，如ThrowsAdvice捕获不到在它之后的Advice的异常
+  - 各Advisor的实现类已经实现了Ordered接口，可直接注入属性值指定优先级即可，优先级顺序号越小，优先级越高
+
+### 9.5 Spring AOP的织入
+
+Spring的织入器为ProxyFactory
+
+#### 使用ProxyFactory
+
+织入完成后，ProxyFactory返回织入完成的那个代理对象
+
+- 指定进行织入的目标对象（构造方法或setter方法指定）
+- 指定Aspect，即Advisor
+  - 也可只添加Advice
+    - 对Introduction之外的类型，会为Advice默认构造Advisor，Pointcut默认为Pointcut.TRUE
+    - 对Introduction类型，分为静态和动态(...............不太懂，见书)
+
+ProxyFactory对不同类型的目标类的处理方式不同：
+
+- 基于接口的代理
+
+  - 只要目标对象实现了接口，ProxyFactory就会以代理模式处理
+
+    ![](9-11.jpg)
+
+- 基于类的代理
+  - 目标对象没有实现接口时，默认情况下ProxyFactory会使用CGLIB进行代理
+  - 也可在ProxyFactory设置proxyTargetClass的值或optimize的值强制使用CGLIB方式，即使实现了接口
+- Introduction的织入
+  
+  - (.............见书)
+
+#### <u>ProxyFactory的本质</u>
+
+- AopProxy
+
+  ![](9-12.jpg)
+
+- AdvisedSupport
+  ![](9-13.jpg)
+
+- ProxyFactory
+
+  <u>![](9-14.jpg)</u>
+
+#### <u>容器中的织入器ProxyFactoryBean</u>
+
+- ProxyFactoryBean的本质
+  - 用来生产Proxy的FactoryBean，即让其getObject()方法返回目标类的代理对象
+  - 其父类ProxyCreateSupport已经把设置目标对象、配置其它、生成对应的AopProxy都完成了，只需要在getObject()方法将其生成的AopProxy返回即可（已经在ProxyFactoryBean内实现）
+  - ProxyFactoryBean的singleton属性为true时，getObject()每次都返回同一个对象；为false时，getObject()每次返回的是新对象
+
+- ProxyFactoryBean使用
+
+  ![](9-15.jpg)
+  
+  - 配置文件：
+  
+  ![](9-16.jpg)
+  - Introduction的织入
+  
+    ![](9-17.jpg)
+
+#### 自动代理
+
+
+
