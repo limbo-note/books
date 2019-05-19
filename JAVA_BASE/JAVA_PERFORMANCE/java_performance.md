@@ -114,7 +114,31 @@ jstack命令，获取到锁的线程可观察到正在运行(Runnable)，且日�
 
 # 5. Java应用性能分析工具
 
-Performance Analyzer和NetBeans Profiler工具。Performance Analyzer能进行系统调用级的、线程级的等性能分析；NetBeans Profiler分析内存，定位内存泄漏
+Performance Analyzer和NetBeans Profiler工具。Performance Analyzer能进行系统调用级的、线程级的等性能分析；NetBeans Profiler分析内存，定位内存泄漏（功能与VisualVM类似）
 
 # 6. Java应用性能分析技巧
+
+### 6.2 系统或内核态CPU使用
+
+Performance Analyzer可查看内核态CPU的使用率，并且可查看高内核态CPU方法的调用栈，可针对方法进行优化，优化方向是减少IO系统调用的频率（加入缓存或每次调用处理更多的数据，如使用BufferedOutputStream）；另一个减少系统态CPU的方法是使用NIO，NIO可使得每次系统调用处理更多的数据
+
+### 6.3 锁竞争
+
+严重的锁竞争时会表现出CPU的使用率比较低，且有大量的让步式上下文切换；Performance Analyzer可查看各方法在锁上消耗时间占总锁时间的比例，可针对性进行优化
+
+见书，一个共享Random实例导致的性能问题（Random的next方法会使用CAS操作更新种子值，若大量线程并发使用同一个Random对象，则会使大量CPU消耗在CAS的循环中，应为每一个线程都生成一个Random对象，ThreadLocal实现）
+
+### 6.4 volatile
+
+频繁更新volatile字段会触发CPU缓存（工作内存）更新，导致性能问题；只是频繁读不会有性能问题
+
+### 6.5 数据结构的大小
+
+StringBuilder和StringBuffer内部都由一个可改变内容的数组来实现，当数组容量不够时需要扩容，产生性能问题
+
+类似的还有ArrayList、HashMap等大部分集合类
+
+# 7. JVM性能调优
+
+
 
