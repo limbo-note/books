@@ -137,8 +137,3 @@ Performance Analyzer可查看内核态CPU的使用率，并且可查看高内核
 StringBuilder和StringBuffer内部都由一个可改变内容的数组来实现，当数组容量不够时需要扩容，产生性能问题
 
 类似的还有ArrayList、HashMap等大部分集合类
-
-# 7. JVM性能调优
-
-
-
