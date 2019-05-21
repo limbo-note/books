@@ -129,6 +129,8 @@ ArrayList（数组，不同步）、Vector（数组，同步）、LinkedList（�
 
 - TreeMap基于红黑树，可对元素进行排序
 
+- ConcurrentModificationException一般在集合迭代过程中被修改时抛出，所有的集合都不允许在迭代器模式中修改集合的结构，如put()、remove()操作
+
 #### Set接口
 
 HashSet、LinkedHashSet、TreeSet都只是在对应的Map上封装了一下，实现细节与Map相同
@@ -152,12 +154,15 @@ HashSet、LinkedHashSet、TreeSet都只是在对应的Map上封装了一下，�
   - 任何时候都不会被回收
 
 - 软引用(SoftReference)
-  - 当jvm堆使用率临近阈值时，才会回收
-
+  
+- 当jvm堆使用率临近阈值时，才会回收
+  
 - 弱引用(WeakReference)
-  - 只要发现弱引用，就会进行回收；但GC线程优先级低，不一定能及时发现弱引用
-
+  
+- 只要发现弱引用，就会进行回收；但GC线程优先级低，不一定能及时发现弱引用
+  
 - 虚引用(PhantomReference)
+  
   - 几乎等于没有引用，随时可能被回收。当试图用get方法获取对象时，会失败，作用在于跟踪垃圾回收过程
 - WeakHashMap
   - 一旦内存不够时导致GC时，会回收其中没有被引用的数据
