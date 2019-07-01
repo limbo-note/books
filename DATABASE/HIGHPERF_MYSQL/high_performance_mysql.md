@@ -1,4 +1,7 @@
+[TOC]
+
 # 1. MySQL架构与历史
+
 ### 1.1 MySQL逻辑架构
 - 第一层。 大多数工具都具有的，连接处理/授权认证/安全等
 - 第二层。 核心层，查询解析/分析/优化/缓存/内置函数，存储过程/触发器/视图
@@ -11,7 +14,7 @@
 	- 行级锁。 开销最大，对行进行锁定
 
 ### 1.3 事务
-	
+
 	START TRANSACTION;
 	UPDATE ...;
 	UPDATE ...;
@@ -100,7 +103,7 @@
 
 一些错误的测试方法：  
 
-![](https://github.com/limbo-china/books/blob/master/HIGHPERF_MYSQL/2-1.png)
+![](2-1.png)
 
 基准测试方法:
 
