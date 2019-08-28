@@ -24,3 +24,9 @@ reduce将键值对(LongWritable，List(Text))遍历，并原封不动地写出�
 
 ### 8.2 输入格式
 
+### 8.3 输出格式
+
+# 9. MapReduce的特性
+
+
+
