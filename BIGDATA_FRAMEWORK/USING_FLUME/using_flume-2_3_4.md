@@ -85,18 +85,47 @@
   - 可参考学习HTTPSourceXMLHandler类源码
 
 - Spooling Directory Source
+  
   - 监听目录中的文件
 - 使用Deserializers读取自定义格式
-  - 反序列化器转化目录中文件的数据
-
+  
+- 反序列化器转化目录中文件的数据
+  
 - Syslog Source
 - Exec Source
+  
   - 执行用户配置的命令，基于命令的标准输出来生成事件
 - JMS Source
   - 获取Java消息服务队列的数据，如ActiveMQ，Kafka
   - 转换JMS消息为Flume事件
 - 自定义的Source
+  
   - event-driven 和 pollable 两种类型的自定义source
 
 # 4. Channel
+
+### 事务工作流
+
+channel是事务性的，即事务中的事件要么全部批量地存在要么全部都不存在，它能感知事件被写入或者被移除。比如sink从channel中读取事件但写入HDFS失败，此时事件会回滚至channel供其他sink读取
+
+一个事务中包含批量的事件是很重要的，可以提高性能
+
+source的事务由channel的处理器来处理，其处理方式与sink几乎相同。单个事务不能同时写入和读取事件
+
+![](4-1.jpg)
+
+### Flume中的channel
+
+两种channel都是完全线程安全的
+
+- memory channel
+  - 在堆上存储写入的事件，是一个内存上的队列，在尾部写入，在头部读取
+  - 高吞吐量，线程安全，可以同时处理几个source和几个sink的操作
+  - 每个事务有自己单独的队列，在source事务提交成功时，事件才会移入channel的主队列中，事件才对sink可用；在sink事务提交成功时，事件才会从事务和主队列中移除
+  - 配置参数见书
+
+- file channel
+  - 将每个放入channel的事件写出到磁盘上，以文件形式存在。当且仅当文件中的事件被全部读取并且提交时，文件才会被删除。可以设置每个数据文件的最大大小，当某一个数据文件达到最大值时，就会创建一个新的文件
+  - 如果写入磁盘失败，file channel可能会丢数据
+  - file channel的数据恢复机制很类似于redis的AOF备份文件恢复机制
 
