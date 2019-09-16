@@ -37,4 +37,25 @@
 pairRDD，专有的RDD
 
 - 创建pairRDD
-  - 
+  - mapToPair() ，parallelizePairs() 等
+- 具体操作函数见书
+  - 聚合操作。reduceByKey() ，foldByKey()  ，combineByKey() 
+  - 分组操作。`rdd.reduceByKey(func)` 与 `rdd.groupByKey().mapValues(value => value.reduce(func))` 等价 ，但是前者更为高效，因为它避免了为每个键创建存放值的列表的步骤 
+  - 连接操作。
+  - 排序。
+  - 行动操作基本与RDD一样
+
+### 数据分区
+
+假设一个不变的大表userData和每次都变化的小表events 做join操作。默认情况下，连接操作会将两个数据集中的所有键的哈希值都求出来， 将该哈希值相同的记录通过网络传到同一台机器上，然后在那台机器上对所有键相同的记录进行连接操作。
+
+在每次调用userData.join(events )时，都会重新计算大表userData的哈希值进行混洗并发送到相应节点，这是很低效的。利用partitionBy() 预先将userData进行分区并持久化（不进行持久化的话，相当于每次依然需要重新混洗），可避免这种情况。
+
+![](4-1.jpg)
+
+![](4-2.jpg)
+
+![](4-3.jpg)
+
+- 自定义分区方式。实现Partitioner接口
+
