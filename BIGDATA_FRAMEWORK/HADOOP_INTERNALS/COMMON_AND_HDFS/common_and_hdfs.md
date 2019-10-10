@@ -102,7 +102,7 @@ hadoop自带的框架Serialization实现
 
 # 4. 远程过程调用
 
-#### RMI
+### 4.1 RMI
 
 RMI包封装rpc细节
 
@@ -110,11 +110,70 @@ RMI包封装rpc细节
 
 ![](4-1.jpg)
 
-#### Java动态代理和NIO
+### 4.2 Java动态代理和NIO
 
 略，具体见详细其它笔记
 
 ![](4-2.jpg)
 
-#### Hadoop中的远程过程调用
+### 4.3 Hadoop中的远程过程调用
+
+![](4-3.jpg)
+
+### 4.4 Hadoop IPC的代码结构(hadoop 1)
+
+核心代码在三个文件中：`Client.java、Server.java、RPC.java`
+
+![](4-4.jpg)
+
+- Connection类
+  - 客户端和服务端连接的一个抽象，分为Client.Connection和Server.Connection
+  - ConnectionId，客户端复用到服务端的连接，通过此类来区分连接是否为同一个（包括了远端服务器地址、ticket、和远程接口protocol）
+  - ConnectionHeader，两端建立连接后发送的第一条消息
+
+- Call类
+  - 对IPC接口方法调用的抽象，同样分为Client.Call和Server.Call
+
+- Server处理器
+  - 即Listener、Handler和Responder类，配合完成远程调用的处理
+
+### 4.5 Hadoop IPC连接过程
+
+Connection类包括连接建立、数据读写、连接维护、连接关闭
+
+#### Connection类成员变量
+
+- Client.Connection成员变量
+
+  分为TCP相关、连接相关、远程调用相关三类
+
+  ![](4-5.jpg)
+
+- Server.Connection成员变量
+
+  同样分为TCP相关、连接相关、远程调用相关三类
+
+  ![](4-6.jpg)
+
+#### IPC连接的建立
+
+- 客户端连接建立
+
+  客户端需要连接时，都会调用getConnection()方法，但会有连接复用的情况出现
+
+  ![](4-7.jpg)
+
+- 服务端连接建立
+
+  服务端由Server.Listener来监听连接，主要代码如下：
+
+  ![](4-8.jpg)
+
+  Listener的run方法如下：
+
+  ![](4-9.jpg)
+
+  Server.Listener.Reader类也是一个Runnable对象，并在Listener类初始化时已经启动其线程，其run方法如下：
+
+  ![](4-10.jpg)
 
