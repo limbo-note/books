@@ -130,8 +130,9 @@ Client.Connection.touch()更新此值：
 ![](4-16.jpg)
 
 - RPC.Invocation
+  
   - 当在IPC客户端远程接口实例上进行方法调用时，会生成一个RPC.Invocation实例，包含了RPC调用必须的方法相关信息，但不包含接口类信息。因为Client.Connection中包含了ConnectionHeader（ConnectionHeader又包含了protocol接口信息），在其连接上进行调用时自然可以获取到接口信息（一个连接对应一个接口）
-
+  
 - Client.Call
 
   ![](4-17.jpg)
@@ -147,3 +148,24 @@ Client.Connection.touch()更新此值：
 
 #### 客户端方法调用过程
 
+一个典型的RPC使用如下：
+
+![](4-19.jpg)
+
+涉及一个重要的类RPC.Invoker，继承自InvocationHandler（动态代理），有Client类和ConnectionId类的成员变量，并会在Invoker构造函数中通过工厂方法构造一个Client实例和构造一个ConnectionId实例。
+
+- 具体调用过程如下：
+
+![](4-20.jpg)
+
+- RPC.getProxy()方法相关代码
+
+![](4-21.jpg)
+
+- RPC.Invoker.invoke()方法相关代码
+
+![](4-22.jpg)
+
+- Client.call()相关代码
+
+![](4-23.jpg)
