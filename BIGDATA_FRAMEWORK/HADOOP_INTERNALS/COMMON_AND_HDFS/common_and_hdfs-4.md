@@ -117,3 +117,33 @@ Client.Connection.touch()更新此值：
 
 #### 关闭IPC连接
 
+先略过，见书
+
+### 4.6 Hadoop IPC方法调用相关过程
+
+客户端是一个比较复杂的Java动态代理应用；服务端由Listener、Handler和Responder配合完成读取、处理和应答三个步骤服务端的应答中，必须考虑到正常返回和有异常发生的两种情况
+
+#### IPC方法调用成员变量
+
+涉及到三个类：
+
+![](4-16.jpg)
+
+- RPC.Invocation
+  - 当在IPC客户端远程接口实例上进行方法调用时，会生成一个RPC.Invocation实例，包含了RPC调用必须的方法相关信息，但不包含接口类信息。因为Client.Connection中包含了ConnectionHeader（ConnectionHeader又包含了protocol接口信息），在其连接上进行调用时自然可以获取到接口信息（一个连接对应一个接口）
+
+- Client.Call
+
+  ![](4-17.jpg)
+
+  - 由于连接复用，同一个连接上可能有多个IPC调用正在执行（且由于NIO的性质，请求和应答很可能顺序会被打乱），为了区别不同的调用，使用了成员变量id进行标识
+  - param变量即上述的RPC.Invocation对象
+  - value和error变量分别对应前面提到的正常返回和有异常发生的两种情况
+  - done变量标识调用的结束，结束时，value和error对象必有一个不是null
+
+- Server.Call
+
+  ![](4-18.jpg)
+
+#### 客户端方法调用过程
+
