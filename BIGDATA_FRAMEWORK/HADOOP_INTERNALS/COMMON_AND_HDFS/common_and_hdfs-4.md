@@ -169,3 +169,12 @@ Client.Connection.touch()更新此值：
 - Client.call()相关代码
 
 ![](4-23.jpg)
+
+- Client.Connection.receiveResponse()方法代码分析
+
+  ![](4-24.jpg)
+
+总结IPC客户端调用过程：动态代理获取一个实例，调用被InvocationHandler捕获后构造Call发送到服务端，等待服务端响应并返回调用结果。**IPC的调用是一个同步操作，调用者线程会一直等到调用完成才继续执行；而网络通信是异步的（因为Connection类本身继承于线程Thread），网络的请求发送后不需要等待响应。wait()/notify()机制解决了异步网络和同步调用之间的差异**
+
+#### 服务端方法调用过程
+
