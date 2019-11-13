@@ -1,20 +1,4 @@
-- [4. 并发编程基础](#4-并发编程基础)
-	- [4.1 线程](#41-线程)
-	- [4.2 启动和终止线程](#42-启动和终止线程)
-	- [4.3 线程间通信](#43-线程间通信)
-	- [4.4 线程应用](#44-线程应用)
-- [5. Java中的锁](#5-java中的锁)
-	- [5.1 Lock](#51-lock)
-	- [5.2 队列同步器AQS](#52-队列同步器aqs)
-	- [5.3 重入锁](#53-重入锁)
-	- [5.4 读写锁](#54-读写锁)
-	- [5.5 LockSupport](#55-locksupport)
-	- [5.6 Condition](#56-condition)
-- [6. Java并发容器和框架](#6-java并发容器和框架)
-	- [6.1 ConcurrentHashMap](#61-concurrenthashmap)
-	- [6.2 ConcurrentLinkedQueue](#62-concurrentlinkedqueue)
-	- [6.3 BlockingQueue](#63-blockingqueue)
-	- [6.4 Fork Join框架](#64-fork-join框架)
+[TOC]
 
 # 4. 并发编程基础
 
