@@ -131,7 +131,7 @@
 
 关于poll方法注意事项：
 	
-- 读取分区中的数据是通过发起一个fetch请求来执行的，但消费者的poll方法只是可能会发起fetch请求。原因：每次发起fetch请求时，读取到的数据是有限制的，通过配置项max.partition.fetch.bytes来限制的，而在执行poll方法时，会根据配置项个max.poll.records来限制一次最多poll多少个record，所以在record没有poll完之前，调用poll方法并不会发起fetch请求
+- 读取分区中的数据是通过发起一个fetch请求来执行的，但消费者的poll方法只是可能会发起fetch请求。原因：每次发起fetch请求时，读取到的数据是有限制的，通过配置项max.partition.fetch.bytes和fetch.max.bytes来限制的，而在执行poll方法时，会根据配置项个max.poll.records来限制一次最多poll多少个record，所以在record没有poll完之前，调用poll方法并不会发起fetch请求
 - 可能出现这样的情况： 假如fetch到了100个record，放到本地缓存后，限制每次只能poll出15个record。需要执行7次poll才能将这一次fetch的数据消费完毕。前6次是每次poll15个record，最后一次是poll出10个record
 
 **一个消费者对于一个线程，否则将造成线程不安全**
@@ -158,7 +158,6 @@
 	- RoundRobin，分区逐个分配个各消费者 
 - client.id
 - max.poll.records
-	- 详细见博客
 - receive.buffer.bytes/send.buffer.bytes
 	- TCP缓冲区大小
 
