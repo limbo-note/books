@@ -56,3 +56,51 @@ kafka-topics.sh 脚本的实质就是调用`kafka.admin.TopicCommand` 类，然�
 
 ### 4.3 分区管理
 
+#### 优先副本选举
+
+只有leader副本提供读写服务，当leader宕机后，leader会转移到其它节点上，会造成负载不均衡。故引入**优先副本**，即AR中的第一个副本，通过优先副本的选举来均衡集群的负载叫分区平衡。
+
+`auto.leader.rebalance.enable`   默认为true，kafka的控制器会启动定时任务检查分区leader是否均衡。不建议自动（性能问题），`kafka-perferred-replica-election.sh` 可手动执行分区平衡操作 
+
+#### 分区重分配
+
+在集群扩容、broker节点失效的场景下对分区进行迁移，即 `kafka-reassign-partitions.sh`  的工作，分区重分配对集群的性能有很大的影响  
+
+#### 复制限流
+
+分区重分配本质在于数据复制，先增加新的副本，然后进行数据同步，最后删除旧的副本，kafka-config.sh 脚本和 kafka-reassign-partitions.sh 脚本可进行限流。与修改分区数不同，分区副本数可以减少。
+
+### 4.4 合适的分区数
+
+`kafka-producer-perf-test.sh` 和 `kafka-consumer-perf-test.sh` 对集群进行性能测试。消息中间件的性能一般是指吞吐量（广义来说还包括延迟），消息写入的吞吐量会受到消息大小、消息压缩方式、消息发送方式（同步／异步）、消息确认类型( acks ）、副本因子等参数的影响，消息消费的吞吐量会受到应用逻辑处理速度的影响。
+
+![](4-7.jpg)    
+
+并不是分区数越多，吞吐量越大的。在中间会达到一个峰值（分区数对消费者的影响同理）。分区的数量也会受到操作系统的文件描述符数量的限制
+
+# 5. 日志存储
+
+### 5.1 文件目录布局
+
+![](5-1.jpg)
+
+每个Log的最后一个 LogSegment 才是active Segment，追加消息时只能往这个segment写数据，每个segment都包含.log、.index和.timeindex文件，名称都是以baseOffset（即该LogSegment 中的第一条消息的offset）命名
+
+![](5-2.jpg)
+
+### 5.2 日志格式演变
+
+消息的存储格式极大影响性能，kafka在此上经过几次重要演变
+
+![](5-3.jpg)
+
+![](5-4.jpg)
+
+**消息压缩**详细见书
+
+![](5-5.jpg)
+
+`kafka-dump-log.sh`  可查看log日志的具体内容
+
+### 5.3 日志索引
+
