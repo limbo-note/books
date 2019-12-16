@@ -48,9 +48,9 @@
 1. fork耗时问题，需要复制父进程空间内存页表，与父进程内存占用成正比。  
 
 2. 备份子进程开销监控和优化：
-  redis属CPU密集型
-  内存消耗分析P341： **如有多个实例，保证同一时刻只有一个子进程工作；避免在大量数据写入时做备份，会导致父进程维护大量页副本** （AOF重写时，除了页副本，还多了AOF重写缓冲区的内存）
-  硬盘开销分析。**重写时避免有其他高硬盘负载的服务；AOF的硬盘同步会直接影响redis的性能**
+    redis属CPU密集型
+    内存消耗分析P341： **如有多个实例，保证同一时刻只有一个子进程工作；避免在大量数据写入时做备份，会导致父进程维护大量页副本** （AOF重写时，除了页副本，还多了AOF重写缓冲区的内存）
+    硬盘开销分析。**重写时避免有其他高硬盘负载的服务；AOF的硬盘同步会直接影响redis的性能**
 
 3. AOF追加阻塞 
 
@@ -100,32 +100,52 @@
 
 ![](5-4.jpg)
 
-**心跳**： 主从节点建议复制后，维护着长连接并发送心跳命令(ping命令、replconf ack命令)  
+**心跳**： 主从节点复制后，维护着长连接并发送心跳命令(ping命令、replconf ack命令)  ，并在心跳里发送复制偏移量
 
-**异步复制**  
+**异步复制** ：从节点的实时复制是异步的，主节点将实时命令异步发给从节点
 
 ### 6.4 开发与运维中的问题  
 
-**读写分离**(减轻主节点压力，只对主节点执行写操作)：复制数据延迟、读到过期数据、从节点故障  
-**主从配置不一致**：maxmemory、hash-max-ziplist-entries  
-**规避全量复制** 
-**规避复制风暴**  
+#### 读写分离
 
-# 7. Redis的噩梦：阻塞
-### 7.1 发现阻塞  
-客户端抛出超时异常——JedisConnectionException  
-redis监控系统——CacheCloud：命令耗时、慢查询、持久化阻塞、连接拒绝、CPU/内存/网络/磁盘  
-**内在原因**  
-API、数据结构使用不合理：慢查询(如hgetall)——slowlog get [n]查看  
-CPU饱和：redis-cli -h -p --stat查看redis状态(可看到OPS)，过度追求内存优化从而导致了CPU消耗大，bgsave持久化占用大量CPU  
+- 复制数据延迟
+    - 监控程序定期检查主从偏移量差（字节为单位），相差太大时做切主操作
+- 读到过期数据
+    - 从节点不会主动执行del命令删除键
+    - 3.2版本后，从节点读取数据之前会检查键的过期时间来决定是否返回数据  
+- 从节点故障  
+
+#### 主从配置不一致
+
+maxmemory、hash-max-ziplist-entries等内存配置需要一致；但可以主节点关闭AOF而在从节点开启  
+
+#### 规避全量复制
+
+- 第一次建立复制关系
+- 主节点重启，运行ID不匹配，也触发全量复制
+- 复制积压缓冲区不足。即部分复制请求的偏移量找不到
+
+#### 规避复制风暴
+
+- 单节点复制风暴
+    - 主节点重启，有多个从节点，此时触发多个全量复制。（可将拓扑改成树状结构）
+- 单机器复制风暴
+    - 一台机器上多个主节点实例
+
+# 7. 阻塞
+客户端抛出超时异常——JedisConnectionException 
+redis监控系统——CacheCloud：命令耗时、慢查询、持久化阻塞、连接拒绝、CPU/内存/网络/磁盘 
+**内在原因** 
+API、数据结构使用不合理：慢查询(如hgetall)——slowlog get [n]查看 
+CPU饱和：redis-cli -h -p --stat查看redis状态(可看到OPS)，过度追求内存优化从而导致了CPU消耗大，bgsave持久化占用大量CPU 
 持久化阻塞：fork阻塞、AOF刷盘阻塞、HugePage写操作阻塞  
 
-**外在原因**  
-CPU竞争：进程竞争(bgsave竞争，其他进程竞争)，绑定CPU(为减小多实例redisCPU切换开销做绑定，在做持久化时父子进程共享CPU，造成阻塞)  
-内存交换：`cat /proc/[process_id]/smaps |grep Swap`查看进程内存交换  
+**外在原因** 
+CPU竞争：进程竞争(bgsave竞争，其他进程竞争)，绑定CPU(为减小多实例redisCPU切换开销做绑定，在做持久化时父子进程共享CPU，造成阻塞) 
+内存交换：`cat /proc/[process_id]/smaps |grep Swap`查看进程内存交换 
 网络问题：连接拒绝、网络延迟(--latency可做测试)、网卡软中断
 
-# 8. 理解内存
+# 8. 理解内存（重要）
 ### 8.1 内存消耗
 `info memory`获取内存相关指标，关注used_memory_rss和used_memory  
 1. 自身内存：一般自身内存消耗非常小  
@@ -141,26 +161,3 @@ CPU竞争：进程竞争(bgsave竞争，其他进程竞争)，绑定CPU(为减�
 
 ### 8.3 内存优化
 redisObject优化、缩减键值对象、共享对象池、字符串优化、编码优化、控制键的数量
-
-# 9. 哨兵
-和主从复制模式相比，只是多了一些sentinel监控节点，对主从复制数据节点进行监控，完成自动故障转移的功能，形成了Redis Sentinel架构  
-
-# 10. 集群
-(............)
-
-# 13. 监控平台CacheCloud
-### 13.1 部署
-(自己构建)maven3, redis3.0, mysql 5, jdk7, cachecloud  
-1. mysql创建cache_cloud库, 表结构cachecloud/script/cachecloud.sql  
-2. cachecloud-open-web/src/main/swap目录下，配置  
-3. mvn clean compile install [-Ponline][-Plocal] 构建，再启动  
-4. 登录界面  
-
-(直接使用二进制版本)  
-- cachecloud-open-web-1.0-SNAPSHOT.war: cachecloud war包
-- cachecloud.sql: 数据库schema，默认数据名为cache_cloud，可以自行修改
-- jdbc.properties：jdbc数据库配置，自行配置
-- start.sh：启动脚本
-- stop.sh： 停止脚本
-- logs：存放日志的目录  
-默认端口是8585，可以修改start.sh中的server.port进行重置
